@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guia de estudo de C (ANSI C89)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+:root{--bg:#eef2f5;--panel:#fff;--ink:#14232e;--mute:#546674;--line:#cfd9e0;--acc:#0f6e7c;--kw:#b25e09;--code-bg:#0e2230;--code-ink:#e4eef4;--code-mute:#7f98a8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a22;--panel:#16252f;--ink:#e4eef4;--mute:#92a8b6;--line:#2a3d4a;--acc:#4fc3d3;--kw:#f0a050;--code-bg:#09141b}}
+:root[data-theme="dark"]{--bg:#0f1a22;--panel:#16252f;--ink:#e4eef4;--mute:#92a8b6;--line:#2a3d4a;--acc:#4fc3d3;--kw:#f0a050;--code-bg:#09141b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Atkinson Hyperlegible",system-ui,sans-serif;line-height:1.6;font-size:17px}
+.wrap{display:grid;grid-template-columns:230px minmax(0,1fr);max-width:1120px;margin:0 auto;gap:0 40px;padding:0 20px}
+nav{position:sticky;top:0;align-self:start;max-height:100vh;overflow-y:auto;padding:28px 0}
+nav a{display:block;color:var(--mute);text-decoration:none;padding:5px 10px;border-left:3px solid var(--line);font-size:15px}
+nav a:hover,nav a:focus-visible{color:var(--acc);border-left-color:var(--acc);outline:none}
+nav strong{display:block;font-size:19px;margin-bottom:14px}
+main{padding:28px 0 80px;min-width:0}
+h1{font-size:clamp(2rem,5vw,3rem);line-height:1.1;margin:0 0 10px}
+.lead{color:var(--mute);max-width:60ch;margin:0 0 22px}
+#q{width:100%;max-width:460px;padding:11px 14px;font:inherit;border:2px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink)}
+#q:focus{outline:none;border-color:var(--acc)}
+section{margin-top:52px}
+h2{font-size:1.6rem;margin:0 0 6px;padding-bottom:8px;border-bottom:3px solid var(--acc)}
+h3{font-size:1.05rem;margin:0 0 6px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px 18px;margin-top:16px}
+p{margin:0 0 10px}
+code{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:.88em}
+p code,td code,li code{background:var(--bg);padding:1px 6px;border-radius:3px;border:1px solid var(--line)}
+pre{background:var(--code-bg);color:var(--code-ink);padding:14px 16px;border-radius:5px;overflow-x:auto;margin:10px 0 0;line-height:1.5}
+pre code{font-size:14px}
+.c{color:var(--code-mute)}
+.tw{overflow-x:auto;margin-top:12px}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:7px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--panel);font-size:14px}
+.kws{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.kws code{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--kw);padding:3px 9px;border-radius:3px;font-size:14px}
+.warn{border-left:5px solid var(--kw)}
+.hide{display:none}
+#none{display:none;margin-top:30px;color:var(--mute)}
+footer{color:var(--mute);font-size:14px;margin-top:60px}
+@media (max-width:820px){.wrap{display:block}nav{position:static;max-height:none;padding:18px 0 0;display:flex;flex-wrap:wrap;gap:6px}nav strong{width:100%;margin-bottom:4px}nav a{border:1px solid var(--line);border-radius:4px;padding:4px 10px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav aria-label="Seções">
+<strong>Guia de C</strong>
+<a href="#estrutura">Estrutura</a>
+<a href="#tipos">Tipos de dados</a>
+<a href="#reservadas">Palavras reservadas</a>
+<a href="#operadores">Operadores</a>
+<a href="#fluxo">Controle de fluxo</a>
+<a href="#funcoes">Funções</a>
+<a href="#arrays">Arrays e strings</a>
+<a href="#ponteiros">Ponteiros</a>
+<a href="#structs">struct, union, enum</a>
+<a href="#memoria">Memória dinâmica</a>
+<a href="#es">Entrada e saída</a>
+<a href="#bibliotecas">Bibliotecas</a>
+<a href="#preproc">Pré-processador</a>
+<a href="#compilar">Compilar e depurar</a>
+<a href="#erros">Erros comuns</a>
+<a href="#roteiro">Roteiro de estudo</a>
+</nav>
+
+<main>
+<h1>Guia de estudo de C</h1>
+<p class="lead">Referência rápida em ANSI C (C89/C90): comandos, palavras reservadas, tópicos e bibliotecas. Use a busca para filtrar os blocos.</p>
+<input id="q" type="search" placeholder="Buscar: malloc, switch, ponteiro..." aria-label="Buscar no guia">
+<p id="none">Nada encontrado para esse termo.</p>
+
+<section id="estrutura">
+<h2>Estrutura de um programa</h2>
+<div class="card">
+<p>Todo programa começa na função <code>main</code>. No C89, as variáveis são declaradas no início do bloco, e comentários usam <code>/* */</code>.</p>
+<pre><code>#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    int idade;                       <span class="c">/* declarações primeiro */</span>
+
+    printf("Qual sua idade? ");
+    scanf("%d", &amp;idade);
+    printf("Voce tem %d anos.\n", idade);
+
+    return 0;                        <span class="c">/* 0 = sucesso */</span>
+}</code></pre>
+</div>
+</section>
+
+<section id="tipos">
+<h2>Tipos de dados</h2>
+<div class="card tw">
+<table>
+<tr><th>Tipo</th><th>Uso</th><th>printf</th></tr>
+<tr><td><code>char</code></td><td>Um caractere (ou inteiro de 1 byte)</td><td><code>%c</code> / <code>%d</code></td></tr>
+<tr><td><code>short</code>, <code>int</code>, <code>long</code></td><td>Inteiros de tamanhos crescentes</td><td><code>%hd</code>, <code>%d</code>, <code>%ld</code></td></tr>
+<tr><td><code>unsigned</code></td><td>Inteiro sem sinal (só positivos)</td><td><code>%u</code>, <code>%lu</code></td></tr>
+<tr><td><code>float</code></td><td>Real, precisão simples</td><td><code>%f</code></td></tr>
+<tr><td><code>double</code></td><td>Real, precisão dupla (o padrão para reais)</td><td><code>%f</code> (saída), <code>%lf</code> (scanf)</td></tr>
+<tr><td><code>void</code></td><td>Sem valor (funções sem retorno, <code>void *</code>)</td><td>-</td></tr>
+</table>
+<p style="margin-top:12px">Os tamanhos dependem da máquina. Use <code>sizeof(tipo)</code> para descobrir e consulte <code>&lt;limits.h&gt;</code> e <code>&lt;float.h&gt;</code> para os limites. O C89 não tem <code>bool</code>: use <code>int</code> com 0 (falso) e qualquer outro valor (verdadeiro).</p>
+<p>Modificadores: <code>const</code> (não pode mudar), <code>static</code> (vive durante todo o programa), <code>volatile</code>, <code>register</code>, <code>extern</code>.</p>
+</div>
+</section>
+
+<section id="reservadas">
+<h2>Palavras reservadas (32 no C89)</h2>
+<div class="card">
+<h3>Tipos e modificadores</h3>
+<div class="kws"><code>char</code><code>short</code><code>int</code><code>long</code><code>float</code><code>double</code><code>void</code><code>signed</code><code>unsigned</code><code>const</code><code>volatile</code><code>static</code><code>extern</code><code>register</code><code>auto</code></div>
+<h3 style="margin-top:16px">Estruturas de dados</h3>
+<div class="kws"><code>struct</code><code>union</code><code>enum</code><code>typedef</code><code>sizeof</code></div>
+<h3 style="margin-top:16px">Controle de fluxo</h3>
+<div class="kws"><code>if</code><code>else</code><code>switch</code><code>case</code><code>default</code><code>for</code><code>while</code><code>do</code><code>break</code><code>continue</code><code>goto</code><code>return</code></div>
+<p style="margin-top:14px">Palavras novas em padrões posteriores (não existem no ANSI C): <code>inline</code>, <code>restrict</code>, <code>_Bool</code> (C99); <code>_Generic</code>, <code>_Static_assert</code>, <code>_Atomic</code> (C11).</p>
+</div>
+</section>
+
+<section id="operadores">
+<h2>Operadores</h2>
+<div class="card tw">
+<table>
+<tr><th>Categoria</th><th>Operadores</th></tr>
+<tr><td>Aritméticos</td><td><code>+ - * / %</code> (o <code>%</code> só funciona com inteiros)</td></tr>
+<tr><td>Incremento</td><td><code>++ --</code> (prefixo muda antes de usar; sufixo, depois)</td></tr>
+<tr><td>Relacionais</td><td><code>== != &lt; &gt; &lt;= &gt;=</code></td></tr>
+<tr><td>Lógicos</td><td><code>&amp;&amp; || !</code> (avaliação em curto-circuito)</td></tr>
+<tr><td>Bit a bit</td><td><code>&amp; | ^ ~ &lt;&lt; &gt;&gt;</code></td></tr>
+<tr><td>Atribuição</td><td><code>= += -= *= /= %= &amp;= |= ^= &lt;&lt;= &gt;&gt;=</code></td></tr>
+<tr><td>Ponteiros e acesso</td><td><code>&amp;</code> (endereço), <code>*</code> (conteúdo), <code>.</code>, <code>-&gt;</code>, <code>[]</code></td></tr>
+<tr><td>Outros</td><td><code>?:</code> (ternário), <code>,</code> (vírgula), <code>sizeof</code>, <code>(tipo)</code> (cast)</td></tr>
+</table>
+<p style="margin-top:12px">Cuidado clássico: <code>=</code> atribui, <code>==</code> compara. Divisão entre dois inteiros descarta a parte decimal (<code>7 / 2</code> vale <code>3</code>).</p>
+</div>
+</section>
+
+<section id="fluxo">
+<h2>Controle de fluxo</h2>
+<div class="card">
+<h3>if / else if / else</h3>
+<pre><code>if (nota &gt;= 7)       printf("Aprovado\n");
+else if (nota &gt;= 5)  printf("Recuperacao\n");
+else                 printf("Reprovado\n");</code></pre>
+</div>
+<div class="card">
+<h3>switch</h3>
+<pre><code>switch (opcao) {
+    case 1:  printf("Um\n");  break;   <span class="c">/* sem break, cai no proximo case */</span>
+    case 2:  printf("Dois\n"); break;
+    default: printf("Outro\n");
+}</code></pre>
+</div>
+<div class="card">
+<h3>for, while, do-while</h3>
+<pre><code>int i;
+for (i = 0; i &lt; 10; i++)  printf("%d ", i);
+
+while (i &gt; 0)  i--;           <span class="c">/* testa antes */</span>
+
+do { i++; } while (i &lt; 5);    <span class="c">/* executa ao menos uma vez */</span></code></pre>
+<p style="margin-top:10px"><code>break</code> sai do laço, <code>continue</code> pula para a próxima volta, <code>goto</code> existe mas quase nunca vale a pena.</p>
+</div>
+</section>
+
+<section id="funcoes">
+<h2>Funções</h2>
+<div class="card">
+<p>Declare o protótipo antes de usar. Em C, parâmetros são passados <strong>por valor</strong>: para alterar a variável original, passe um ponteiro.</p>
+<pre><code>int soma(int a, int b);            <span class="c">/* prototipo */</span>
+
+void troca(int *x, int *y)         <span class="c">/* altera os originais */</span>
+{
+    int tmp = *x;
+    *x = *y;
+    *y = tmp;
+}
+
+int fatorial(int n)                <span class="c">/* recursao */</span>
+{
+    if (n &lt;= 1) return 1;
+    return n * fatorial(n - 1);
+}
+
+<span class="c">/* uso: troca(&amp;a, &amp;b); */</span></code></pre>
+</div>
+</section>
+
+<section id="arrays">
+<h2>Arrays e strings</h2>
+<div class="card">
+<pre><code>int v[5] = {1, 2, 3, 4, 5};       <span class="c">/* indices de 0 a 4 */</span>
+int m[3][3];                       <span class="c">/* matriz */</span>
+
+char nome[20] = "Ana";             <span class="c">/* string = char[] terminado em '\0' */</span>
+char *p = "texto";                 <span class="c">/* literal: nao modifique */</span></code></pre>
+<p style="margin-top:10px">C não verifica limites: acessar <code>v[5]</code> acima é comportamento indefinido. Um array passado para função vira ponteiro, então envie também o tamanho.</p>
+</div>
+<div class="card tw">
+<h3>Funções de <code>&lt;string.h&gt;</code></h3>
+<table>
+<tr><th>Função</th><th>O que faz</th></tr>
+<tr><td><code>strlen(s)</code></td><td>Tamanho (sem o <code>'\0'</code>)</td></tr>
+<tr><td><code>strcpy(d, s)</code> / <code>strncpy</code></td><td>Copia a string</td></tr>
+<tr><td><code>strcat(d, s)</code> / <code>strncat</code></td><td>Concatena</td></tr>
+<tr><td><code>strcmp(a, b)</code></td><td>Compara: 0 se iguais, negativo ou positivo caso contrário</td></tr>
+<tr><td><code>strchr</code>, <code>strstr</code></td><td>Busca caractere ou substring</td></tr>
+<tr><td><code>memcpy</code>, <code>memset</code>, <code>memcmp</code></td><td>Operam em blocos de bytes</td></tr>
+</table>
+</div>
+</section>
+
+<section id="ponteiros">
+<h2>Ponteiros</h2>
+<div class="card">
+<p>Um ponteiro guarda o <strong>endereço</strong> de outra variável. É o tópico central do C.</p>
+<pre><code>int x = 10;
+int *p = &amp;x;          <span class="c">/* p aponta para x */</span>
+*p = 20;                <span class="c">/* x agora vale 20 */</span>
+
+int v[3] = {1, 2, 3};
+int *q = v;             <span class="c">/* nome do array = endereco do 1o elemento */</span>
+printf("%d", *(q + 1)); <span class="c">/* 2, igual a v[1] */</span>
+
+int *nulo = NULL;       <span class="c">/* sempre inicialize; nunca desreferencie NULL */</span></code></pre>
+<p style="margin-top:10px">Aritmética de ponteiros soma em unidades do tipo apontado. Também existem ponteiros para ponteiros (<code>int **</code>) e ponteiros para função (<code>int (*f)(int)</code>).</p>
+</div>
+</section>
+
+<section id="structs">
+<h2>struct, union, enum e typedef</h2>
+<div class="card">
+<pre><code>struct Aluno {
+    char nome[30];
+    int  idade;
+    float nota;
+};
+
+struct Aluno a = {"Beto", 20, 8.5f};
+struct Aluno *pa = &amp;a;
+printf("%s %d\n", a.nome, pa-&gt;idade);   <span class="c">/* . direto, -&gt; via ponteiro */</span>
+
+typedef struct Aluno Aluno;           <span class="c">/* agora basta "Aluno" */</span>
+
+enum Cor { VERMELHO, VERDE, AZUL };    <span class="c">/* 0, 1, 2 */</span>
+
+union Valor { int i; float f; };       <span class="c">/* membros dividem a mesma memoria */</span></code></pre>
+</div>
+</section>
+
+<section id="memoria">
+<h2>Memória dinâmica</h2>
+<div class="card">
+<p>Funções de <code>&lt;stdlib.h&gt;</code>. Tudo que você aloca, você precisa liberar.</p>
+<pre><code>int *v = (int *) malloc(10 * sizeof(int));
+if (v == NULL) { <span class="c">/* falhou: trate o erro */</span> }
+
+v = (int *) realloc(v, 20 * sizeof(int));   <span class="c">/* redimensiona */</span>
+
+free(v);        <span class="c">/* libera */</span>
+v = NULL;       <span class="c">/* evita uso apos free */</span></code></pre>
+<p style="margin-top:10px"><code>calloc(n, tam)</code> aloca já zerado. Ferramenta para achar vazamentos: <code>valgrind ./programa</code> (Linux) ou <code>-fsanitize=address</code> no GCC.</p>
+</div>
+</section>
+
+<section id="es">
+<h2>Entrada e saída</h2>
+<div class="card tw">
+<table>
+<tr><th>Função</th><th>Uso</th></tr>
+<tr><td><code>printf</code></td><td>Saída formatada no terminal</td></tr>
+<tr><td><code>scanf</code></td><td>Entrada formatada (passe o endereço: <code>&amp;x</code>)</td></tr>
+<tr><td><code>fgets(buf, tam, stdin)</code></td><td>Lê uma linha com segurança. Prefira a <code>gets</code>, que é perigosa e foi removida do padrão</td></tr>
+<tr><td><code>getchar</code> / <code>putchar</code></td><td>Um caractere por vez</td></tr>
+<tr><td><code>fopen</code>, <code>fclose</code></td><td>Abre e fecha arquivos (<code>"r"</code>, <code>"w"</code>, <code>"a"</code>, <code>"rb"</code>, <code>"wb"</code>)</td></tr>
+<tr><td><code>fprintf</code>, <code>fscanf</code>, <code>fgets</code>, <code>fputs</code></td><td>Texto em arquivos</td></tr>
+<tr><td><code>fread</code>, <code>fwrite</code>, <code>fseek</code>, <code>ftell</code>, <code>rewind</code></td><td>Arquivos binários e posicionamento</td></tr>
+</table>
+</div>
+<div class="card tw">
+<h3>Formatos mais usados</h3>
+<table>
+<tr><th>Código</th><th>Tipo</th><th>Código</th><th>Tipo</th></tr>
+<tr><td><code>%d</code></td><td>int</td><td><code>%c</code></td><td>char</td></tr>
+<tr><td><code>%u</code></td><td>unsigned</td><td><code>%s</code></td><td>string</td></tr>
+<tr><td><code>%ld</code></td><td>long</td><td><code>%p</code></td><td>ponteiro</td></tr>
+<tr><td><code>%f</code></td><td>float/double</td><td><code>%x</code></td><td>hexadecimal</td></tr>
+<tr><td><code>%.2f</code></td><td>2 casas decimais</td><td><code>%5d</code></td><td>largura mínima 5</td></tr>
+</table>
+<pre><code>FILE *f = fopen("dados.txt", "r");
+if (f == NULL) { perror("fopen"); return 1; }
+<span class="c">/* ... usa o arquivo ... */</span>
+fclose(f);</code></pre>
+</div>
+</section>
+
+<section id="bibliotecas">
+<h2>Bibliotecas padrão do ANSI C</h2>
+<div class="card tw">
+<table>
+<tr><th>Header</th><th>Para que serve</th><th>Destaques</th></tr>
+<tr><td><code>stdio.h</code></td><td>Entrada e saída</td><td><code>printf scanf fgets fopen fclose</code></td></tr>
+<tr><td><code>stdlib.h</code></td><td>Utilidades gerais</td><td><code>malloc free atoi strtol rand srand exit qsort abs</code></td></tr>
+<tr><td><code>string.h</code></td><td>Strings e blocos de memória</td><td><code>strlen strcpy strcmp memcpy memset</code></td></tr>
+<tr><td><code>math.h</code></td><td>Matemática (compile com <code>-lm</code>)</td><td><code>sqrt pow sin cos fabs floor ceil log exp</code></td></tr>
+<tr><td><code>ctype.h</code></td><td>Classificar caracteres</td><td><code>isdigit isalpha isspace toupper tolower</code></td></tr>
+<tr><td><code>time.h</code></td><td>Data e hora</td><td><code>time clock difftime strftime</code></td></tr>
+<tr><td><code>limits.h</code>, <code>float.h</code></td><td>Limites dos tipos</td><td><code>INT_MAX INT_MIN CHAR_BIT DBL_EPSILON</code></td></tr>
+<tr><td><code>assert.h</code></td><td>Verificações em tempo de execução</td><td><code>assert(cond)</code></td></tr>
+<tr><td><code>stddef.h</code></td><td>Definições comuns</td><td><code>NULL size_t offsetof</code></td></tr>
+<tr><td><code>stdarg.h</code></td><td>Funções com argumentos variáveis</td><td><code>va_list va_start va_arg va_end</code></td></tr>
+<tr><td><code>errno.h</code></td><td>Códigos de erro</td><td><code>errno</code></td></tr>
+<tr><td><code>setjmp.h</code>, <code>signal.h</code>, <code>locale.h</code></td><td>Saltos, sinais e idioma</td><td>Usos avançados</td></tr>
+</table>
+<p style="margin-top:12px">Fora do padrão ANSI, mas muito úteis depois: <code>stdint.h</code> e <code>stdbool.h</code> (C99), <code>pthread.h</code> (threads no POSIX), <code>unistd.h</code> e <code>sys/socket.h</code> (sistema e rede, Linux).</p>
+</div>
+</section>
+
+<section id="preproc">
+<h2>Pré-processador</h2>
+<div class="card">
+<pre><code>#include &lt;stdio.h&gt;          <span class="c">/* headers do sistema */</span>
+#include "meu.h"             <span class="c">/* seus proprios headers */</span>
+
+#define PI 3.14159           <span class="c">/* constante */</span>
+#define QUAD(x) ((x) * (x))  <span class="c">/* macro: use parenteses em tudo */</span>
+
+#ifndef MEU_H                <span class="c">/* include guard: evita duplicar o header */</span>
+#define MEU_H
+/* declaracoes aqui */
+#endif</code></pre>
+<p style="margin-top:10px">Outros: <code>#if</code>, <code>#ifdef</code>, <code>#else</code>, <code>#undef</code>, <code>#error</code>. Macros predefinidas: <code>__FILE__</code>, <code>__LINE__</code>, <code>__DATE__</code>, <code>__STDC__</code>.</p>
+</div>
+</section>
+
+<section id="compilar">
+<h2>Compilar e depurar</h2>
+<div class="card">
+<pre><code>gcc -ansi -pedantic -Wall -Wextra prog.c -o prog      <span class="c"># ANSI C com avisos</span>
+gcc -ansi -pedantic -Wall prog.c -o prog -lm           <span class="c"># com math.h</span>
+gcc -g prog.c -o prog                                  <span class="c"># simbolos de depuracao</span>
+gcc -std=c11 -Wall -Wextra prog.c -o prog              <span class="c"># C moderno</span>
+
+gdb ./prog          <span class="c"># break main | run | next | step | print x | quit</span>
+valgrind ./prog     <span class="c"># vazamentos e acessos invalidos</span></code></pre>
+<p style="margin-top:10px">Projetos com vários arquivos: compile cada <code>.c</code> para <code>.o</code> (<code>gcc -c</code>), una com o linker, e automatize com <code>make</code>.</p>
+</div>
+</section>
+
+<section id="erros">
+<h2>Erros comuns de iniciante</h2>
+<div class="card warn">
+<ul>
+<li>Usar <code>=</code> no lugar de <code>==</code> dentro do <code>if</code>.</li>
+<li>Esquecer o <code>&amp;</code> no <code>scanf</code> (exceto em strings).</li>
+<li>Estourar o limite do array, ou esquecer espaço para o <code>'\0'</code> da string.</li>
+<li>Comparar strings com <code>==</code>: use <code>strcmp</code>.</li>
+<li>Usar variável sem inicializar: o valor é lixo.</li>
+<li>Esquecer o <code>break</code> no <code>switch</code>.</li>
+<li>Ponto e vírgula depois do <code>if</code> ou <code>for</code>, que deixa o bloco sem efeito.</li>
+<li>Esquecer o <code>free</code>, ou usar o ponteiro depois dele.</li>
+<li>Devolver o endereço de uma variável local da função.</li>
+<li>Dividir inteiros esperando resultado decimal.</li>
+</ul>
+</div>
+</section>
+
+<section id="roteiro">
+<h2>Roteiro de estudo sugerido</h2>
+<div class="card">
+<ol>
+<li>Variáveis, tipos, operadores e <code>printf</code>/<code>scanf</code>.</li>
+<li>Condicionais e laços (faça exercícios de tabuada, primos, Fibonacci).</li>
+<li>Funções e recursão.</li>
+<li>Arrays, matrizes e strings.</li>
+<li>Ponteiros (reserve bastante tempo aqui e use o depurador).</li>
+<li><code>struct</code>, <code>enum</code>, <code>typedef</code>.</li>
+<li>Memória dinâmica: listas encadeadas, pilhas e filas.</li>
+<li>Arquivos e projetos com vários módulos.</li>
+<li>Passar para C99/C11 e estudar bibliotecas do sistema.</li>
+</ol>
+<p style="margin-top:10px">Livro de referência: <em>The C Programming Language</em>, de Kernighan e Ritchie (2ª edição, escrita em ANSI C).</p>
+</div>
+</section>
+
+<footer>Baseado no padrão ANSI C (C89/C90).</footer>
+</main>
+</div>
+
+<script>
+(function(){
+var q=document.getElementById('q'),none=document.getElementById('none');
+var secs=[].slice.call(document.querySelectorAll('main section'));
+q.addEventListener('input',function(){
+var t=q.value.trim().toLowerCase(),any=false;
+secs.forEach(function(s){
+var cards=[].slice.call(s.querySelectorAll('.card')),hit=false;
+cards.forEach(function(c){
+var m=!t||c.textContent.toLowerCase().indexOf(t)>-1||s.querySelector('h2').textContent.toLowerCase().indexOf(t)>-1;
+c.classList.toggle('hide',!m);if(m)hit=true;
+});
+s.classList.toggle('hide',!hit);if(hit)any=true;
+});
+none.style.display=any?'none':'block';
+});
+})();
+</script>
+</body>
+</html>
