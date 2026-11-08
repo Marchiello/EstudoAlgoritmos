@@ -16,7 +16,8 @@ int main()
     puts("Agora, insira um valor para a altura do retangulo:");
     scanf("%lf", &altura);
 
-    printf("O perimetro do retangulo com as dimensões inseridas é de %.2f\n", 2*(base+altura));
+    printf("O perimetro do retangulo e sua area respectivamente, com as dimensões inseridas, é de %.2f e %.2f \n", 2*(base+altura), 2*(base*altura));
+
 
     return 0;
 }
@@ -42,7 +43,7 @@ int main()
 7º: Chamo a função `printf()`, ja que a mensagem exibida necessita de formatação, e exibo a mensagem informando o valor do perímetro do retangulo com as dimensões inseridas pelo usuário.
 * Ao especificar a string que deve ser exibida pro usuário, uso, ao final, o especificador de formato `%2.f` pra informar que **o valor que será inserido nessa parte será um float com 2 casas decimais**, isso antes de utilizar o `\n` para quebrar a linha.
 
-* Utilizo a fórmula `2*(base+altura) para calculo do perímetro. Anteriormente eu havia criado uma variavel própria pra armazenar o valor desse calculo, mas buscando uma solução mais elegante, achei a solução que empreguei no código.
+* Utilizo a fórmula `2*(base+altura)` para calculo do perímetro. Anteriormente eu havia criado uma variavel própria pra armazenar o valor desse calculo, mas buscando uma solução mais elegante, achei a solução que empreguei no código. O mesmo vale para a fórmula de área,`2*(base*altura)`. 
 
 ---
 
@@ -52,6 +53,8 @@ Durante a busca por uma solução mais eficiente, descobri que eu poderia usar a
 
 ````c
 
+// Código
+
 puts("Insira a base e a altura do retangulo (separadas por espaco):");
 scanf("%lf %lf", &base, &altura);
 
@@ -60,6 +63,8 @@ scanf("%lf %lf", &base, &altura);
 Dessa forma, utilizaria o código da seguinte forma:
 
 ````
+Terminal
+
 
 Insira a base e a altura do retangulo (separadas por espaco):
 <valor_base> <valor_altura>

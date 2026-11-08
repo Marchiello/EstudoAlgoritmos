@@ -26,3 +26,5 @@ int main()
 **Sugestão:**
 Descobri que existe uma função adequada pra imprimir valores simples, sem mistura de texto, formatação e coisas do tipo. A função `puts()`, de **put string**.
 - Essa função quebra linha automaticamente sempre que é chamada, como se tivesse um `\n` presente no final da string imprimida. Isso não acontece com o `printf()`, onde você precisaria inserir o `\n`.
+
+* **Detalhe importante**: A função `puts()` só aceita entradas *string*. Portanto, inserir valores ou variáveis de outros tipos vai retornar um erro.
